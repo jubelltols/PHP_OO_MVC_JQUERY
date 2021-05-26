@@ -1,6 +1,6 @@
 <?php
 
-$path = $_SERVER['DOCUMENT_ROOT'] . '/website/';
+$path = $_SERVER['DOCUMENT_ROOT'] . '/PHP_OO_MVC_JQUERY/';
 include($path . "model/connect.php");
 
 class DAOShop{
@@ -103,6 +103,38 @@ class DAOShop{
 
     function select_count_filters($filters){
         $sql = "SELECT COUNT(*) AS n_prod FROM producto $filters";
+        $conexion = connect::con();
+        $res = mysqli_query($conexion, $sql);
+        connect::close($conexion);
+        return $res;
+    }
+
+    function select_load_likes($user){
+        $sql = "SELECT codigo_producto FROM `likes` WHERE user='$user'";
+        $conexion = connect::con();
+        $res = mysqli_query($conexion, $sql);
+        connect::close($conexion);
+        return $res;
+    }
+
+    function select_likes($id, $user){
+        $sql = "SELECT user, codigo_producto FROM `likes` WHERE user='$user' AND codigo_producto='$id'";
+        $conexion = connect::con();
+        $res = mysqli_query($conexion, $sql);
+        connect::close($conexion);
+        return $res;
+    }
+
+    function insert_likes($id, $user){
+        $sql = "INSERT INTO likes (user, codigo_producto) VALUES ('$user','$id')";
+        $conexion = connect::con();
+        $res = mysqli_query($conexion, $sql);
+        connect::close($conexion);
+        return $res;
+    }
+
+    function delete_likes($id, $user){
+        $sql = "DELETE FROM `likes` WHERE user='$user' AND codigo_producto='$id'";
         $conexion = connect::con();
         $res = mysqli_query($conexion, $sql);
         connect::close($conexion);

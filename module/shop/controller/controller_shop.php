@@ -1,8 +1,9 @@
 <?php
 
-   $path = $_SERVER['DOCUMENT_ROOT'] . "/website/";
+   $path = $_SERVER['DOCUMENT_ROOT'] . "/PHP_OO_MVC_JQUERY/";
    include ($path . "module/shop/model/DAOshop.php");
-    
+   include ($path . "view/inc/JWT.php");
+
     switch($_GET['op']){
 
         case 'view';
@@ -137,6 +138,73 @@
                     array_push($dinfo, $row);
                 }
                 echo json_encode($dinfo);
+            }
+            break;
+
+        case 'load_likes';    
+            try{
+
+                $token = $_GET['user'];
+                $secret = 'maytheforcebewithyou';
+
+                $JWT = new JWT;
+                $json = $JWT->decode($token, $secret);  
+                $json = json_decode($json, TRUE);
+
+                $dao = new DAOShop();
+                $rdo = $dao->select_load_likes($json['name']);
+
+            }catch (Exception $e){
+                echo json_encode("error");
+                exit;
+            }
+            if(!$rdo){
+                echo json_encode("error");
+                exit;
+            }else{
+                $dinfo = array();
+                foreach ($rdo as $row) {
+                    array_push($dinfo, $row);
+                }
+                echo json_encode($dinfo);
+            }
+            break;
+
+        case 'control_likes';    
+            try{
+
+                $token = $_GET['user'];
+                $secret = 'maytheforcebewithyou';
+
+                $JWT = new JWT;
+                $json = $JWT->decode($token, $secret);  
+                $json = json_decode($json, TRUE);
+
+                $dao = new DAOShop();
+                $rdo = $dao->select_likes($_GET['id'], $json['name']);
+
+            }catch (Exception $e){
+                echo json_encode("error");
+                exit;
+            }
+            if(!$rdo){
+                echo json_encode("error");
+                exit;
+            }else{
+                $dinfo = array();
+                foreach ($rdo as $row) {
+                    array_push($dinfo, $row);
+                }
+                //echo json_encode(count($dinfo));
+                if(count($dinfo) === 0){
+                    $dao = new DAOShop();
+                    $rdo = $dao->insert_likes($_GET['id'], $json['name']);
+                    echo json_encode("0");
+                }else{
+                    $dao = new DAOShop();
+                    $rdo = $dao->delete_likes($_GET['id'], $json['name']);
+                    echo json_encode("1");
+                }
             }
             break;
  

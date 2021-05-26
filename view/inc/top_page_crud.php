@@ -13,7 +13,8 @@
 
         <!--========== CSS ==========-->
         <link rel="stylesheet" href="view/css/styles.css">
-
+        <link rel="stylesheet" href="view/scss/styles.scss">
+        
         <!-- dataTables -->
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
         <!-- dataTables -->

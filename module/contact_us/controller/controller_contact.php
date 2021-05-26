@@ -1,5 +1,5 @@
 <?php
-        $path = $_SERVER['DOCUMENT_ROOT'] . "/website/";
+        $path = $_SERVER['DOCUMENT_ROOT'] . "/PHP_OO_MVC_JQUERY/";
         include ($path . "module/contact_us/model/DAOcontact.php");
 
         switch($_GET['op']){

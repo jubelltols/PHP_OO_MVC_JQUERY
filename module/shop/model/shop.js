@@ -3,7 +3,6 @@ function load_filters() {
     var expanded = true;
 
     $(document).on('click','.selectBox',function () {
-      
         var checkboxes = document.getElementById("checkboxes");
           if (!expanded) {
             checkboxes.style.display = "block";
@@ -12,7 +11,6 @@ function load_filters() {
             checkboxes.style.display = "none";
             expanded = false;
           }
-
     });  
 
     $.ajax({
@@ -109,11 +107,11 @@ function load_list_products(items_page = 12, total_prod = 0) {
    
     if (filters != false) {
         var url = "module/shop/controller/controller_shop.php?op=filters_search&filters=" + filters;
-        if ($('#remove__filters').length == 0) {
-            $('<button></button>').attr({'class':'button', 'id': 'remove__filters'}).appendTo('.filters__container').html('Remove filters');
+        if ($('#remove-filters').length == 0) {
+            $('<button></button>').attr({'class':'button', 'id': 'remove-filters'}).appendTo('.filter-content').html('Remove filters');
         }
     }else {
-        $('#remove__filters').remove();
+        $('#remove-filters').remove();
         var url = "module/shop/controller/controller_shop.php?op=list";
     }
 
@@ -134,14 +132,16 @@ function load_list_products(items_page = 12, total_prod = 0) {
             $(".shop__details").empty();
             for (row in data) {
                 $("#list_product").append(
-                    "<div class='list__product' id='"+ data[row].codigo_producto +"'> <div class='list__heart'> <i class='bx bx-heart'> </i> </div>"+
-                    "<div class='list__imges'> <img class='list__img' src='"+ data[row].images +"'> </div>" +
+                    "<div class='list__product' id='"+ data[row].codigo_producto +"'> <div class='list__heart' id='"+ data[row].codigo_producto +"'> <i id='like' class='bx bx-heart'> </i> </div>"+
+                    "<div class='list__imges' id='"+ data[row].codigo_producto +"'> <img class='list__img' src='"+ data[row].images +"'> </div>" +
                     "<div class='list__data' id='#'> <div class='list__brand'> <div>"+ data[row].nombre +"</div>" +
                     "<div class='list__price'>"+ data[row].precio +"</div> </div>" +
                     "<div class='list__descriptionc'> <div>"+ data[row].codigo_producto +"</div> </div> </div> </div>"
                 )   
             }
         }  
+        load_like();
+        click_like();
     })
     .fail(function( textStatus ) {
         if ( console && console.log ) {
@@ -192,7 +192,7 @@ function load_pagination(){
 }
 
 function click_details() {
-    $(document).on('click','.list__product',function () {
+    $(document).on('click','.list__imges',function () {
         console.log(this.getAttribute('id'));
         localStorage.setItem('details', true);
         localStorage.setItem('codigo_producto',  $(this).attr('id'))
@@ -221,15 +221,95 @@ function load_details() {
         $('.filters__container').empty();
         $(".shop__details").append(
             "<div class='container py-xl-5 py-lg-3'> <div class='row'> <div class='col-lg-6 left-wthree-img text-right'> <img src='" + data[0].images +
-            "' alt='' class='img-fluid mt-5'/> </div> <div class='col-lg-6 about-right-faq'> </br> </br> </br> </br> <h3 class='text-da'>" + data[0].nombre +
+            "' alt='' class='img-fluid mt-5'/> <div class='list__heart' id='"+ data[0].codigo_producto +"'> <i id='like' class='bx bx-heart'> </i> </div> </div> <div class='col-lg-6 about-right-faq'> </br> </br> </br> </br> <h3 class='text-da'>" + data[0].nombre +
             "</h3> <ul class='w3l-right-book mt-4'> <li>Codigo producto: " + data[0].codigo_producto + " </li> <li>Nombre: " + data[0].nombre + " </li> <li>Precio: " + data[0].precio +
             " </li> <li>Talla: " + data[0].talla + " </li> <li>Color: " + data[0].color + " </li> <li>Descripcion: " + data[0].descripcion +
-            " </li> </ul> <a href='index.php?page=controller_shop&op=view' class='btn button-style button-style-2 mt-sm-5 mt-4'>Volver</a> </div> </div> </div>"
+            " </li> </ul>  <button id='"+ data[0].codigo_producto +"' class='button' onclick='add_cart()'>Add To Cart</button>" + 
+            " <a href='index.php?page=controller_shop&op=view' class='btn button-style button-style-2 mt-sm-5 mt-4'>Volver</a> </div> </div> </div>"
         );
         load_api();
     }).catch(function() {
         window.location.href = 'index.php?page=error503'
     });  
+
+}
+
+function load_like(){
+    console.log(localStorage.getItem('token'));
+    if(localStorage.getItem('token') == null){
+        var local = localStorage.getItem('likes');
+        if(local != null){
+            var like = JSON.parse(local);
+        }else{
+            var like = [];
+        }
+        like.forEach(load);
+    
+        function load(item, index){
+            if($("div.list__heart#"+item).children("i").hasClass("bx-heart")){
+                $("div.list__heart#"+item).children("i").removeClass("bx-heart").addClass("bxs-heart");
+                console.log("item");
+            }
+        }
+    }else{
+        ajaxPromise("module/shop/controller/controller_shop.php?op=load_likes&user=" + localStorage.getItem('token'), 'GET', 'JSON')
+        .then(function(data) { 
+            console.log(data);
+            for (row in data) {
+                if($("div.list__heart#"+data[row].codigo_producto).children("i").hasClass("bx-heart")){
+                        $("div.list__heart#"+data[row].codigo_producto).children("i").removeClass("bx-heart").addClass("bxs-heart");
+                }
+            }
+        }).catch(function() {
+            window.location.href = 'index.php?page=error503'
+        });   
+    }
+}
+
+function click_like(){
+    $(document).on('click','.list__heart',function () {
+        if(localStorage.getItem('token') == undefined){
+            if($(this).children("i").hasClass("bx-heart")){
+                $(this).children("i").removeClass("bx-heart").addClass("bxs-heart");
+                like_storage(this.getAttribute('id'), like);
+            }else{
+                $(this).children("i").removeClass("bxs-heart").addClass("bx-heart");
+                like_storage(this.getAttribute('id'), like);
+            }
+        }else{
+            ajaxPromise("module/shop/controller/controller_shop.php?op=control_likes&id=" + this.getAttribute('id') + "&user=" + localStorage.getItem('token'), 'GET', 'JSON')
+            .then(function(data) { 
+                console.log(data);
+            }).catch(function() {
+                window.location.href = 'index.php?page=error503'
+            });  
+
+            if($(this).children("i").hasClass("bx-heart")){
+                $(this).children("i").removeClass("bx-heart").addClass("bxs-heart");
+            }else{
+                $(this).children("i").removeClass("bxs-heart").addClass("bx-heart");
+            }
+        }
+    });
+}
+
+function like_storage(id){
+
+    var local = localStorage.getItem('likes');
+    if(local != null){
+        var like = JSON.parse(local);
+    }else{
+        var like = [];
+    }
+
+    if(like.indexOf(id) === -1){
+        like.push(id);
+    }else if(like.indexOf(id) !== -1){
+        like.splice(like.indexOf(id),1);
+    } 
+   
+    localStorage.setItem('likes', JSON.stringify(like));
+    console.log(localStorage.getItem('likes'));
 
 }
 
@@ -256,15 +336,7 @@ function load_api() {
         });   
 }
 
-function remove_filters() {
-    $(document).on('click', '#remove__filters', function() {
-        localStorage.removeItem('filters');
-        load_content();
-    });
-}
-
-function load_content(){ 
-
+function loadContent(){ 
     if (localStorage.getItem('details') == "true") {
         localStorage.setItem('details', "false");
         load_details();
@@ -276,5 +348,5 @@ function load_content(){
 }
 
 $(document).ready(function() {
-    load_content();
+    loadContent();
 });

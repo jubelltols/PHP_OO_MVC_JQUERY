@@ -69,3 +69,67 @@ function ajaxPromise(sUrl, sType, sTData, sData = undefined) {
         }); 
     });
 }
+
+/*==================== LOAD MENU ====================*/
+
+function load_menu() {
+    console.log("hola");
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_home&op=homepage" class="nav__link">Home</a>').appendTo('.nav__list');
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_shop&op=view" class="nav__link">Shop</a>').appendTo('.nav__list');
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_contact&op=contact" class="nav__link">Contact us</a>').appendTo('.nav__list');
+    //$('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_login&op=login_view" class="nav__link">Log in</a>').appendTo('.nav__list');
+   
+    ajaxPromise('module/login/controller/controller_logIn.php?op=data_user', 'POST', 'JSON',{token: localStorage.getItem('token')})
+    .then(function(data) {
+        if (data.type === 'admin') {
+            menu_admin();
+        }else if (data.type === 'client') {
+            menu_client();
+        }
+    }).catch(function() {
+        $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_login&op=login_view" class="nav__link">Log in</a>').appendTo('.nav__list');
+        $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_cart&op=view" class="nav__link">Cart</a>').appendTo('.nav__list');
+    });
+}
+
+/*==================== MENUS ====================*/
+
+function menu_admin() {
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_crud&op=list" class="nav__link">Crud</a>').appendTo('.nav__list');
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="" id="logout" class="nav__link">Log out</a>').appendTo('.nav__list');
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_cart&op=view" class="nav__link">Cart</a>').appendTo('.nav__list');
+}
+
+function menu_client() {
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="" id="logout" class="nav__link">Log out</a>').appendTo('.nav__list');
+    $('<li></li>').attr({'class' : 'nav__item'}).html('<a href="index.php?page=controller_cart&op=view" class="nav__link">Cart</a>').appendTo('.nav__list');
+}
+
+/*==================== CLICK LOGOUT ====================*/
+
+function click_logout() {
+    $(document).on('click', '#logout', function() {
+        logout();
+    });
+}
+
+/*==================== LOGOUT ====================*/
+
+function logout() {
+    $.ajax({
+        url: 'module/login/controller/controller_login.php?op=logout',
+        type: 'POST',
+        dataType: 'JSON'
+    }).done(function(data) {
+        console.log(data);
+        localStorage.removeItem('token');
+        window.location.href = "index.php?page=controller_home&op=homepage";
+    }).fail(function() {
+        console.log('Something has occured');
+    });
+}
+
+$(document).ready(function() {
+    load_menu();
+    click_logout();
+});

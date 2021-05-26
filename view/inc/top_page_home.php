@@ -16,6 +16,7 @@
 
         <!--========== CSS ==========-->
         <link rel="stylesheet" href="view/css/styles.css">
+        <link rel="stylesheet" href="view/scss/styles.scss">
         
         <script src="https://cdn.jsdelivr.net/npm/glider-js@1.7.3/glider.min.js"></script>
 

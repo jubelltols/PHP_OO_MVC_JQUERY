@@ -1,14 +1,13 @@
 <?php
-    
-    function validate($codigo_producto){
 
-        if(DAOProducts::select_codigo_producto($codigo_producto)){
+    function validate($email){
+        $dao = new DAOLogin();
+        if($dao->select_email($email)){
             $check=false;
         }else {
             $check=true;
         }
         return $check;
-
     }
 
 ?>

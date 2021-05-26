@@ -1,6 +1,6 @@
 <?php
 
-    $path = $_SERVER['DOCUMENT_ROOT'] . '/website/';
+    $path = $_SERVER['DOCUMENT_ROOT'] . '/PHP_OO_MVC_JQUERY/';
     include($path . "model/connect.php");
     
     class DAOSearch{

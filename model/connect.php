@@ -3,8 +3,8 @@
 		public static function con(){
 
 			$host = 'localhost';  
-    		$user = "jubelltols";                     
-    		$pass = "ATM22txs";                             
+    		$user = "root";                     
+    		$pass = "";                             
     		$db = "productos";                      
     		$port = 3306;                           
     		

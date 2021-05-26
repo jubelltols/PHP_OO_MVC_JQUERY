@@ -11,11 +11,17 @@
 		 <!--========== BOX ICONS ==========-->
         <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
 
+        <!--========== CSS GLIDER ==========-->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glider-js@1.7.3/glider.min.css">
+
         <!--========== CSS ==========-->
         <link rel="stylesheet" href="view/css/styles.css">
         <link rel="stylesheet" href="view/scss/styles.scss">
         
-        <script src="module/contact_us/model/contact_us.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/glider-js@1.7.3/glider.min.js"></script>
+
+        <script src="module/login/model/login.js"></script>
+        <script src="module/cart/model/cart.js"></script>
         <script src="view/lang/translate.js"></script>
         <script src="module/search/model/search.js"></script>
         

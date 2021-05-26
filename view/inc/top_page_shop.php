@@ -19,12 +19,14 @@
 
         <!--========== CSS ==========-->
         <link rel="stylesheet" href="view/css/styles.css">
+        <link rel="stylesheet" href="view/scss/styles.scss">
         
         <!--========== JS ==========-->
         <script src="module/shop/model/shop.js"></script>
         <script src="view/lang/translate.js"></script>
         <script src="view/js/main.js"></script>
         <script src="module/search/model/search.js"></script>
+        <script src="module/cart/model/cart.js"></script>
         
         <!--========== SCROLL REVEAL ==========-->
         <script src="https://unpkg.com/scrollreveal"></script>

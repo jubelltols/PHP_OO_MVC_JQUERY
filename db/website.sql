@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-03-2021 a las 15:23:08
--- Versión del servidor: 10.1.38-MariaDB
--- Versión de PHP: 7.3.2
+-- Tiempo de generación: 26-05-2021 a las 18:35:22
+-- Versión del servidor: 10.4.17-MariaDB
+-- Versión de PHP: 8.0.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -56,6 +55,18 @@ INSERT INTO `brands` (`brand`, `img`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `cart`
+--
+
+CREATE TABLE `cart` (
+  `user` varchar(20) NOT NULL,
+  `codigo_producto` varchar(20) NOT NULL,
+  `qty` int(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `categoria`
 --
 
@@ -89,12 +100,32 @@ CREATE TABLE `images` (
 --
 
 INSERT INTO `images` (`list`, `categoria`) VALUES
-('view/img/car_1.jpg', 'Calzado'),
-('view/img/car_2.jpg', 'Accesorio'),
-('view/img/car_3.jpg', 'Ropa'),
-('https://cdn.shopify.com/s/files/1/0094/2252/files/4_809fdb57-9573-43e0-8e81-675789a39be4.jpg?v=1544466033', NULL),
-('https://cdn.shopify.com/s/files/1/0094/2252/files/6_dd23bd1c-c865-48a5-b485-29c79b3ded72.jpg?v=1544466056', NULL),
-('https://cdn.shopify.com/s/files/1/0094/2252/files/3_04a0c746-5805-42b6-bab1-fd6adb4a1979.jpg?v=1544466024', NULL);
+('https://cdn.shopify.com/s/files/1/0094/2252/files/4_809fdb57-9573-43e0-8e81-675789a39be4.jpg?v=1544466033', 'Calzado'),
+('https://cdn.shopify.com/s/files/1/0094/2252/files/6_dd23bd1c-c865-48a5-b485-29c79b3ded72.jpg?v=1544466056', 'Accesorio'),
+('https://cdn.shopify.com/s/files/1/0094/2252/files/3_04a0c746-5805-42b6-bab1-fd6adb4a1979.jpg?v=1544466024', 'Ropa');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `likes`
+--
+
+CREATE TABLE `likes` (
+  `user` varchar(50) NOT NULL,
+  `codigo_producto` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `likes`
+--
+
+INSERT INTO `likes` (`user`, `codigo_producto`) VALUES
+('jubelltols', 'FM0624'),
+('jubelltols', 'B22716-1'),
+('jubelltols', '10480106'),
+('jubelltols', 'EQYZT05482'),
+('jubelltols', 'VN0A45DPBLK'),
+('jubelltols', 'EE6147');
 
 -- --------------------------------------------------------
 
@@ -122,6 +153,42 @@ INSERT INTO `mapa` (`nombre`, `longitud`, `latitud`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pedidos`
+--
+
+CREATE TABLE `pedidos` (
+  `cod_ped` varchar(20) NOT NULL,
+  `user` varchar(20) NOT NULL,
+  `cod_prod` varchar(50) NOT NULL,
+  `talla` int(20) NOT NULL,
+  `cantidad` varchar(10) NOT NULL,
+  `precio` varchar(10) NOT NULL,
+  `total_precio` varchar(10) NOT NULL,
+  `fecha` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pedidos`
+--
+
+INSERT INTO `pedidos` (`cod_ped`, `user`, `cod_prod`, `talla`, `cantidad`, `precio`, `total_precio`, `fecha`) VALUES
+('jubelltols', 'jubelltols', 'B22716-1', 46, '1', '54', '54', '20210524'),
+('juanmibt', 'juanmibt', 'EE6147', 39, '3', '55', '165', '20210526'),
+('jubelltols', 'jubelltols', 'B22716-1', 46, '3', '54', '162', '20210526');
+
+--
+-- Disparadores `pedidos`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_cart_AI` AFTER INSERT ON `pedidos` FOR EACH ROW BEGIN 
+DELETE FROM `cart` WHERE user = NEW.user AND codigo_producto = NEW.cod_prod;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `producto`
 --
 
@@ -144,20 +211,20 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`codigo_producto`, `marca`, `nombre`, `precio`, `talla`, `color`, `descripcion`, `images`, `categoria`, `sexo`, `likes`) VALUES
-(' B22716-1', 'adidas', 'ADIDAS CAMPUS ADV', 54, 46, 'NEGRO', 'zapatillas Adidas Campus adv negro', 'view/img/zapatillas-adidas-campus-adv-negro-.png', 'Calzado', 'Hombre', '4'),
-('EE6147', 'adidas', 'ADIDAS CAMPUS ADV NEGRO', 55, 39, 'negro', 'zapatillas Adidas Campus adv negro', 'view/img/zapatillas-adidas-campus-adv-negro.png', 'Calzado', 'Niño', '5'),
-('FM0624', 'adidas', 'ADIDAS SOLID CREW SOCK AZUL', 12, 0, 'Blanco', 'calcetines Adidas Solid crew sock azul', 'view/img/calcetines-adidas-solid-crew-sock-azul.jpg', 'Accesorio', 'Hombre', '2'),
-('10480106', '', 'BURTON CHLOE BNIE BURDEOS', 29, 0, 'Burdeos', 'gorros Burton Chloe bnie burdeos', 'view/img/gorros-burton-chloe-bnie-burdeos.jpg', 'Accesorio', 'Mujer', '0'),
-('EDYZT04053', '', 'DC TRESTNA SS BLANCO', 17, 0, 'Blanco', 'DC TRESTNA SS BLANCO', 'view/img/camisetas-de-manga-corta-dc-trestna-ss-blanco.jpg', 'Ropa', 'Hombre', '0'),
-('GGCSW336', '', 'GRIMEY URMAH GIRL CROP CREWNEC', 49, 0, 'Negro', 'sudaderas sin capucha Grimey Urmah girl crop crewneck negro', 'view/img/sudaderas-sin-capucha-grimey-urmah-girl-crop-crewneck-negro.jpg', 'Ropa', 'Mujer', '0'),
-(' AQ7460-201', 'nike', 'NIKE ZOOM STEFAN JANOSKI MID C', 57, 44, 'marron', 'zapatillas Nike Zoom stefan janoski mid crafted camel', 'view/img/zapatillas-nike-zoom-stefan-janoski-mid-crafted-camel.png', 'Calzado', 'Hombre', '0'),
-('EQYZT05482', '', 'QUIKSILVER INSIDE LINES SS BEI', 19, 0, 'Beige', 'camisetas de manga corta Quiksilver Inside lines ss beige', 'view/img/camisetas-de-manga-corta-quiksilver-inside-lines-ss-beige.jpg', 'Ropa', 'Hombre', '0'),
-('VN0A45DPBLK', 'vans', 'VANS EASY BOX SNAPBACK NEGRO', 20, 0, 'Negro', 'gorras Vans Easy box snapback negro', 'view/img/gorras-vans-easy-box-snapback-negro.jpg', 'Accesorio', 'Hombre', '0'),
+('B22716-1', 'adidas', 'ADIDAS CAMPUS ADV', 54, 46, 'NEGRO', 'zapatillas Adidas Campus adv negro', 'view/img/zapatillas-adidas-campus-adv-negro-.png', 'Calzado', 'Hombre', '84'),
+('EE6147', 'adidas', 'ADIDAS CAMPUS ADV NEGRO', 55, 39, 'negro', 'zapatillas Adidas Campus adv negro', 'view/img/zapatillas-adidas-campus-adv-negro.png', 'Calzado', 'Niño', '87'),
+('FM0624', 'adidas', 'ADIDAS SOLID CREW SOCK AZUL', 12, 0, 'Blanco', 'calcetines Adidas Solid crew sock azul', 'view/img/calcetines-adidas-solid-crew-sock-azul.jpg', 'Accesorio', 'Hombre', '32'),
+('10480106', 'BURTON', 'BURTON CHLOE BNIE BURDEOS', 29, 0, 'Burdeos', 'gorros Burton Chloe bnie burdeos', 'view/img/gorros-burton-chloe-bnie-burdeos.jpg', 'Accesorio', 'Mujer', '23'),
+('EDYZT04053', 'DC', 'DC TRESTNA SS BLANCO', 17, 0, 'Blanco', 'DC TRESTNA SS BLANCO', 'view/img/camisetas-de-manga-corta-dc-trestna-ss-blanco.jpg', 'Ropa', 'Hombre', '0'),
+('GGCSW336', 'GRIMEY', 'GRIMEY URMAH GIRL CROP CREWNEC', 49, 0, 'Negro', 'sudaderas sin capucha Grimey Urmah girl crop crewneck negro', 'view/img/sudaderas-sin-capucha-grimey-urmah-girl-crop-crewneck-negro.jpg', 'Ropa', 'Mujer', '10'),
+('AQ7460-201', 'nike', 'NIKE ZOOM STEFAN JANOSKI MID C', 57, 44, 'marron', 'zapatillas Nike Zoom stefan janoski mid crafted camel', 'view/img/zapatillas-nike-zoom-stefan-janoski-mid-crafted-camel.png', 'Calzado', 'Hombre', '1'),
+('EQYZT05482', 'QUIKSILVER', 'QUIKSILVER INSIDE LINES SS BEI', 19, 0, 'Beige', 'camisetas de manga corta Quiksilver Inside lines ss beige', 'view/img/camisetas-de-manga-corta-quiksilver-inside-lines-ss-beige.jpg', 'Ropa', 'Hombre', '19'),
+('VN0A45DPBLK', 'vans', 'VANS EASY BOX SNAPBACK NEGRO', 20, 0, 'Negro', 'gorras Vans Easy box snapback negro', 'view/img/gorras-vans-easy-box-snapback-negro.jpg', 'Accesorio', 'Hombre', '1'),
 ('VN0A4BG37D5', 'vans', 'VANS FLYING V FT BOXY MORADO', 30, 0, 'Morado', 'sudaderas con capucha Vans Flying v ft boxy morado', 'view/img/sudaderas-con-capucha-vans-flying-v-ft-boxy-morado.jpg', 'Ropa', 'Mujer', '0'),
 ('VN0A38G2UBS', 'vans', 'VANS OLD SKOOL 36 DX MULTICOLO', 51, 43, 'negro', 'zapatillasVans Old skool 36 dx multicolor', 'view/img/zapatillas-vans-old-skool-36-dx-multicolor.png', 'Calzado', 'Mujer', '0'),
-('VN0A3UI6ZTV', 'vans', 'VANS REALM BACKPACK MULTICOLOR', 29, 0, 'Multicolor', 'mochilas Vans Realm backpack multicolor', 'view/img/mochilas-vans-realm-backpack-multicolor.jpg', 'Accesorio', 'Mujer', '0'),
+('VN0A3UI6ZTV', 'vans', 'VANS REALM BACKPACK MULTICOLOR', 29, 0, 'Multicolor', 'mochilas Vans Realm backpack multicolor', 'view/img/mochilas-vans-realm-backpack-multicolor.jpg', 'Accesorio', 'Mujer', '1'),
 ('VN0A3DZ3TBI', 'vans', 'VANS STYLE 36 NEGRO', 48, 40, 'negro', 'zapatillaszapatillas Vans Style 36 negro', 'view/img/zapatillas-vans-style-36-negro.png', 'Calzado', 'Mujer', '0'),
-(' AQ7460-202', 'vans', 'VANS TNT ADVANCED PROTOTYPE VE', 54, 41, 'VERDE', 'zapatillas Vans Tnt advanced prototype verde', 'view/img/zapatillas-vans-tnt-advanced-prototype-verde.png', 'Calzado', 'Niño', '0');
+('AQ7460-202', 'vans', 'VANS TNT ADVANCED PROTOTYPE VE', 54, 41, 'VERDE', 'zapatillas Vans Tnt advanced prototype verde', 'view/img/zapatillas-vans-tnt-advanced-prototype-verde.png', 'Calzado', 'Niño', '1');
 
 -- --------------------------------------------------------
 
@@ -192,58 +259,26 @@ INSERT INTO `shop` (`code`, `brand`, `model`, `price`, `size`, `colour`, `descri
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tiendas`
---
-
-CREATE TABLE `tiendas` (
-  `lugar` varchar(100) NOT NULL,
-  `ciudad` varchar(20) NOT NULL,
-  `direccion` varchar(100) NOT NULL,
-  `telefono` varchar(20) NOT NULL,
-  `horario` varchar(250) NOT NULL,
-  `longitud` float NOT NULL,
-  `latitud` float NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Volcado de datos para la tabla `tiendas`
---
-
-INSERT INTO `tiendas` (`lugar`, `ciudad`, `direccion`, `telefono`, `horario`, `longitud`, `latitud`) VALUES
-('Centro Comercial Alzamora', 'Alcoi', '\r\nCarrer els Alçamora, 44, 03802 Alcoi, Alicante', '965 33 56 84', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado\r\n', 38.6976, -0.480764),
-('CC Plaza Mayor Xàtiva', 'Xàtiva', 'PLAZA MAYOR XATIVA, Ctra. Llosa de Ranes, S/N, 46800 Xàtiva', '962 25 92 03', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 39.0035, -0.528157),
-('Gran Vía', 'Alicante', 'Calle José García Sellés, 2, 03015 Alicante', '965 24 76 84', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 38.3677, -0.469809),
-('Centro Comercial Plaza Mar 2', 'Alicante', 'Avinguda de Dénia, S/N, 03016 Alacant, Alicante', '965 22 00 66', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 38.3547, -0.471394),
-('Centro Comercial L\'Aljub', 'Elche', 'Carrer Jacarilla, 7, Local B - 105, 03205 Elx, Alicante', '965 43 19 63', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 38.262, -0.721053),
-('Av. de la Libertad', 'Murcia', 'Av. de la Libertad, 4, 30009 Murcia\r\n', '968 23 84 50', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 38.0389, -1.14865),
-('Centro Comercial Ociopia', 'Orihuela', 'Av. Obispo Victorio Oliver, 2, 03300 Orihuela, Alicante', '966 74 27 47', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 38.0868, -0.952464),
-('Calle Tesifonte Gallego', 'Albacete', 'Calle Tesifonte Gallego, 9, 02002 Albacete', '967 21 90 19', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 38.9921, -1.8556),
-('Centro Comercial Albacenter', 'Albacete', 'Calle Tesifonte Gallego, 9, 02002 Albacete', '967 21 49 46', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 38.9921, -1.8556),
-('Habaneras Centro Comercial', 'Torrevieja', 'Av. Rosa Mazón Valero, 7, 03180 Torrevieja, Alicante', '966 92 78 26', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 37.9897, -0.686559),
-('Espacio Mediterráneo', 'Cartagena', 'Centro Comercial Espacio Mediterráneo, 30395 Cartagena, Murcia', '968 19 74 55', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 37.6267, -0.949189),
-('C.C. Parque Almenara', 'Campillo', 'Vereda de Enmedio, S/N, 30813 Campillo, Murcia', '968 46 31 98', 'Horario: <br> lunes 10:00–20:30 <br> martes  10:00–20:30 <br> miércoles 10:00–20:30 <br> jueves  10:00–20:30 <br> viernes 10:00–20:30 <br> sábado  10:00–20:30 <br> domingo Cerrado', 37.6355, -1.69912);
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `users`
 --
 
 CREATE TABLE `users` (
+  `id` varchar(250) NOT NULL,
   `nombre` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `password` varchar(25) NOT NULL,
+  `password` varchar(250) NOT NULL,
   `type` varchar(20) NOT NULL,
-  `avatar` varchar(100) NOT NULL
+  `avatar` varchar(100) NOT NULL,
+  `token_email` varchar(250) NOT NULL,
+  `activate` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`nombre`, `email`, `password`, `type`, `avatar`) VALUES
-('Juanmi', 'juanmibt@outlook.com', '$2y$10$ExK0GQqUpwj/g.CfP4', 'client', 'https://www.gravatar.com/avatar/037b6b00f181cbe1978fbdaa0d12b911?s=40&d=identicon'),
-('Juanmi', 'juanmibt@outlook.com', '$2y$10$LpaU8hnMgXZmMaSzE7', 'client', 'https://www.gravatar.com/avatar/037b6b00f181cbe1978fbdaa0d12b911?s=40&d=identicon');
+INSERT INTO `users` (`id`, `nombre`, `email`, `password`, `type`, `avatar`, `token_email`, `activate`) VALUES
+('eyJ0eXAiOiAiSldUIiwgImFsZyI6ICJIUzI1NiJ9.eyJpYXQiOjE2MjE5NjMxMDYsImV4cCI6MTYyMTk2NjcwNiwibmFtZSI6Imp1YmVsbHRvbHMifQ.2re85Wf5FWitr5ljVWQNbKHX776WT3pacgxjicmOuO8', 'jubelltols', 'jubelltols@gmail.com', '$2y$10$nAUC9yQNmN/zak5ISJf.HeLEUr8gdtU6nC6tHMYTIPjdIEmATe30K', 'client', 'https://robohash.org/2cd5d4fe8b458a33af1d478c761d0022', '2276d7e6a3d6b2c3598f', 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

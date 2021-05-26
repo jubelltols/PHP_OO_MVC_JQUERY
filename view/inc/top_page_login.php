@@ -15,7 +15,8 @@
         <link rel="stylesheet" href="view/css/styles.css">
         <link rel="stylesheet" href="view/scss/styles.scss">
         
-        <script src="module/contact_us/model/contact_us.js"></script>
+        <script src="module/login/model/register.js"></script>
+        <script src="module/login/model/login.js"></script>
         <script src="view/lang/translate.js"></script>
         <script src="module/search/model/search.js"></script>
         
